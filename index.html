@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sistem Absensi Online</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+      * {
+        font-family: 'Poppins', sans-serif;
+      }
+
+      .glass-effect {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .gradient-bg {
+        background: linear-gradient(135deg, #991111 0%, #ef3838 100%);
+      }
+
+      .success-toast {
+        animation: slideIn 0.5s ease-out;
+      }
+
+      @keyframes slideIn {
+        from {
+          transform: translateY(-100px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+    </style>
+  </head>
+  <body class="w-full gradient-bg flex items-center justify-center p-4">
+    <div class="w-full max-w-md">
+      <div class="text-center mb-8">
+        <div
+          class="inline-block p-4 rounded-full glass-effect mb-4 ramadan-glow"
+        >
+          <img
+            src="assets/logo.jpeg"
+            alt="Logo sistem absensi dengan ikon jam dan checklist biru pada latar putih"
+            class="w-16 h-16 mx-auto rounded-full lamp"
+          />
+        </div>
+        <h1 class="text-2xl font-bold text-white">SISTEM ABSENSI</h1>
+        <p class="text-white/80 text-sm">Terintegrasi dengan Google Sheets</p>
+      </div>
+
+      <div class="glass-effect rounded-2xl p-6 shadow-xl">
+        <form
+          id="attendanceForm"
+          class="space-y-4"
+          action="https://script.google.com/macros/s/AKfycby_MeHoZtldveZel7Ogie23alZuNnAXAu0OXpeKBcqyHqBGl4ktLJ_034nrQ6_l2aOGew/exec"
+          method="post"
+        >
+          <div>
+            <label class="block text-white text-sm font-medium mb-2" for="nama">
+              Nama Lengkap *
+            </label>
+            <input
+              type="text"
+              id="nama"
+              name="nama"
+              required
+              class="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white/30 transition-all"
+              placeholder="Masukkan nama lengkap Anda"
+            />
+          </div>
+
+          <div>
+            <label
+              class="block text-white text-sm font-medium mb-2"
+              for="outlet"
+            >
+              Nama Outlet *
+            </label>
+            <select
+              id="outlet"
+              name="outlet"
+              required
+              class="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-white/30 transition-all appearance-none"
+            >
+              <option value="" disabled selected>Pilih outlet</option>
+              <option value="Mejayan" class="bg-purple-600 text-white">
+                Mejayan
+              </option>
+              <option value="Maospati" class="bg-purple-600 text-white">
+                Maospati
+              </option>
+              <option value="Madiun" class="bg-purple-600 text-white">
+                Madiun
+              </option>
+              <option value="Dagangan" class="bg-purple-600 text-white">
+                Dagangan
+              </option>
+              <option value="Dolopo" class="bg-purple-600 text-white">
+                Dolopo
+              </option>
+              <option value="Jenangan" class="bg-purple-600 text-white">
+                Jenangan
+              </option>
+              <option value="Jambon" class="bg-purple-600 text-white">
+                Jambon
+              </option>
+              
+            </select>
+          </div>
+
+          <div>
+            <label
+              class="block text-white text-sm font-medium mb-2"
+              for="shift"
+            >
+              Shift Kerja *
+            </label>
+            <select
+              id="shift"
+              name="shift"
+              required
+              class="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-white/30 transition-all appearance-none"
+            >
+              <option value="" disabled selected>Pilih shift</option>
+              <option
+                value="Shift Pagi (08:35-15:30)"
+                class="bg-purple-600 text-white"
+              >
+                Shift Pagi (08:35-15:30)
+              </option>
+              <option
+                value="Shift Siang (12:05-19:00)"
+                class="bg-purple-600 text-white"
+              >
+                Shift Siang (12:05-19:00)
+              </option>
+              <option
+                value="Shift Sore (15:35-22:00)"
+                class="bg-purple-600 text-white"
+              >
+                Shift Sore (15:35-22:00)
+              </option>
+              <option
+                value="Full Time (08:35-22:00)"
+                class="bg-purple-600 text-white"
+              >
+                Full Time (08:35-22:00)
+              </option>
+            </select>
+          </div>
+
+          <div>
+            <label
+              class="block text-white text-sm font-medium mb-2"
+              for="kehadiran"
+            >
+              Kehadiran *
+            </label>
+            <select
+              id="kehadiran"
+              name="kehadiran"
+              required
+              class="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-white/30 transition-all appearance-none"
+            >
+              <option value="" disabled selected>Kehadiran</option>
+              <option value="Hadir" class="bg-purple-600 text-white">
+                Hadir
+              </option>
+              <option value="Izin" class="bg-purple-600 text-white">
+                Izin
+              </option>
+              <option value="Sakit" class="bg-purple-600 text-white">
+                Sakit
+              </option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-white text-sm font-medium mb-2">
+              Waktu Absensi
+            </label>
+            <div
+              class="px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white"
+            >
+              <span id="timestamp">-</span>
+            </div>
+          </div>
+
+          <div>
+            <label
+              class="block text-white text-sm font-medium mb-2"
+              for="catatan"
+            >
+              Catatan
+            </label>
+            <input
+              type="text"
+              id="catatan"
+              name="catatan"
+              class="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white/30 transition-all"
+              placeholder="Masukkan catatan jika ada"
+            />
+          </div>
+
+          <button
+            type="submit"
+            id="submitBtn"
+            class="w-full bg-white text-red-700 py-3 px-4 rounded-lg font-semibold hover:bg-gray-100 transition-all transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-white/30"
+          >
+            📋 Absen Sekarang
+          </button>
+        </form>
+      </div>
+
+      <div class="mt-6 glass-effect rounded-2xl p-4">
+        <h3 class="text-white font-semibold mb-2">
+          📊 Rekap Absensi Hari Ini:
+        </h3>
+        <table
+          class="w-full text-white text-sm border border-white/20 rounded-lg overflow-hidden"
+        >
+          <thead class="bg-white/20">
+            <tr>
+              <th class="px-3 py-2">Nama</th>
+              <th class="px-3 py-2">Outlet</th>
+              <th class="px-3 py-2">Shift</th>
+              <th class="px-3 py-2">Waktu</th>
+              <th class="px-3 py-2">Status</th>
+              <th class="px-3 py-2">Catatan</th>
+            </tr>
+          </thead>
+          <tbody id="rekapBody" class="divide-y divide-white/10"></tbody>
+        </table>
+      </div>
+
+      <div
+        id="successToast"
+        class="fixed top-4 right-4 glass-effect rounded-lg p-4 text-white success-toast hidden"
+      >
+        <div class="flex items-center">
+          <span class="text-green-400 text-lg mr-2">✅</span>
+          <span>Absensi berhasil disimpan!</span>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // 1. DATA KOORDINAT OUTLET (Ganti lat & lng dengan titik asli Google Maps Outlet Anda)
+      // Radius penguncian dihitung dalam meter (contoh: 50 meter)
+      const RADIUS_MAKSIMAL = 50;
+
+      const lokasiOutlet = {
+        'Mejayan': { lat: -7.5432627, lng: 111.6533485 },
+        'Maospati': { lat: -7.5917964, lng: 111.434742 },
+        'Madiun': { lat: -7.648215, lng: 111.5244633 },
+        'Dagangan': { lat: -7.7074278, lng: 111.5468316 },
+        'Dolopo': { lat: -7.7548515, lng: 111.520091 },
+        'Jenangan': { lat: -7.8227162, lng: 111.5395104 },
+        'Jambon': { lat: -7.8954387, lng: 111.3718453 },
+        
+        // Tambahkan atau lengkapi koordinat outlet lainnya di bawah ini dengan format yang sama:
+        // "Nama Outlet": { lat: angka_latitude, lng: angka_longitude }
+      };
+
+      // Ambil elemen
+      const form = document.getElementById('attendanceForm');
+      const rekapBody = document.getElementById('rekapBody');
+      const submitBtn = document.getElementById('submitBtn');
+
+      // Fungsi hitung jarak Haversine (Hasil dalam satuan METER)
+      function hitungJarak(lat1, lon1, lat2, lon2) {
+        const R = 6371e3; // Jari-jari bumi dalam meter
+        const phi1 = (lat1 * Math.PI) / 180;
+        const phi2 = (lat2 * Math.PI) / 180;
+        const deltaPhi = ((lat2 - lat1) * Math.PI) / 180;
+        const deltaLambda = ((lon2 - lon1) * Math.PI) / 180;
+
+        const a =
+          Math.sin(deltaPhi / 2) * Math.sin(deltaPhi / 2) +
+          Math.cos(phi1) *
+            Math.cos(phi2) *
+            Math.sin(deltaLambda / 2) *
+            Math.sin(deltaLambda / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+        return R * c; // Jarak dalam meter
+      }
+
+      // Fungsi cek keterlambatan
+      function cekStatus(shift, waktu) {
+        const jam = waktu.getHours();
+        const menit = waktu.getMinutes();
+
+        if (shift.includes('Pagi')) {
+          return jam > 8 || (jam === 8 && menit > 35)
+            ? 'Terlambat'
+            : 'Tepat Waktu';
+        } else if (shift.includes('Siang')) {
+          return jam > 12 || (jam === 12 && menit > 5)
+            ? 'Terlambat'
+            : 'Tepat Waktu';
+        } else if (shift.includes('Sore')) {
+          return jam > 15 || (jam === 15 && menit > 35)
+            ? 'Terlambat'
+            : 'Tepat Waktu';
+        } else if (shift.includes('Full Time')) {
+          return jam > 8 || (jam === 8 && menit > 35)
+            ? 'Terlambat'
+            : 'Tepat Waktu';
+        }
+        return 'Tepat Waktu';
+      }
+
+      // Tangani submit dengan pengecekan Geolocation
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const outletSelected = document.getElementById('outlet').value;
+
+        // Proteksi jika data koordinat outlet belum diatur di script
+        if (!lokasiOutlet[outletSelected]) {
+          alert(
+            'Koordinat untuk outlet ' +
+              outletSelected +
+              ' belum diatur di sistem. Silakan hubungi admin.'
+          );
+          return;
+        }
+
+        // Ubah text tombol saat memproses GPS
+        submitBtn.disabled = true;
+        submitBtn.textContent = '⌛ Memeriksa Lokasi...';
+
+        // Cek apakah browser mendukung Geolocation
+        if (!navigator.geolocation) {
+          alert('Browser Anda tidak mendukung deteksi lokasi (Geolocation).');
+          resetButton();
+          return;
+        }
+
+        // Mengambil koordinat perangkat user saat ini
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const userLat = position.coords.latitude;
+            const userLng = position.coords.longitude;
+
+            const targetLat = lokasiOutlet[outletSelected].lat;
+            const targetLng = lokasiOutlet[outletSelected].lng;
+
+            // Hitung jarak user ke lokasi outlet target
+            const jarak = hitungJarak(userLat, userLng, targetLat, targetLng);
+
+            // Jika jarak user LEBIH BESAR dari radius maksimal, batalkan absensi
+            if (jarak > RADIUS_MAKSIMAL) {
+              alert(
+                `Absensi GAGAL! Anda berada terlalu jauh dari ${outletSelected}. Jarak Anda saat ini: ${Math.round(
+                  jarak
+                )} meter. (Maksimal toleransi: ${RADIUS_MAKSIMAL} meter)`
+              );
+              resetButton();
+              return;
+            }
+
+            // JIKA LOKASI SESUAI -> Lanjutkan proses simpan data
+            prosesAbsensiSukses();
+          },
+          (error) => {
+            // Penanganan error jika GPS dimatikan atau izin ditolak
+            switch (error.code) {
+              case error.PERMISSION_DENIED:
+                alert(
+                  'Absensi GAGAL! Anda harus mengizinkan akses lokasi (GPS) untuk melakukan absensi.'
+                );
+                break;
+              case error.POSITION_UNAVAILABLE:
+                alert(
+                  'Absensi GAGAL! Informasi lokasi tidak tersedia. Pastikan GPS aktif.'
+                );
+                break;
+              case error.TIMEOUT:
+                alert(
+                  'Absensi GAGAL! Waktu pelacakan lokasi habis (Timeout). Coba lagi.'
+                );
+                break;
+              default:
+                alert(
+                  'Absensi GAGAL terjadi kesalahan lokasi: ' + error.message
+                );
+            }
+            resetButton();
+          },
+          {
+            enableHighAccuracy: true, // Memaksa browser menggunakan GPS akurasi tinggi
+            timeout: 10000, // Batas waktu membaca GPS (10 detik)
+            maximumAge: 0, // Memastikan lokasi yang diambil adalah real-time, bukan cache
+          }
+        );
+      });
+
+      // Fungsi untuk mengembalikan kondisi tombol submit
+      function resetButton() {
+        submitBtn.disabled = false;
+        submitBtn.textContent = '📋 Absen Sekarang';
+      }
+
+      // Fungsi memproses data ke tabel dan Google Sheet jika verifikasi lolos
+      function prosesAbsensiSukses() {
+        const nama = document.getElementById('nama').value;
+        const outlet = document.getElementById('outlet').value;
+        const shift = document.getElementById('shift').value;
+        const kehadiran = document.getElementById('kehadiran').value;
+        const catatan = document.getElementById('catatan').value;
+        const waktu = new Date();
+        const status = cekStatus(shift, waktu);
+
+        // Tambahkan ke tabel rekap
+        const row = document.createElement('tr');
+        row.innerHTML = `
+      <td class="px-3 py-2">${nama}</td>
+      <td class="px-3 py-2">${outlet}</td>
+      <td class="px-3 py-2">${shift}</td>
+      <td class="px-3 py-2">${waktu.toLocaleTimeString('id-ID')}</td>
+      <td class="px-3 py-2 font-bold ${
+        status === 'Terlambat' ? 'text-red-400' : 'text-green-400'
+      }">${status}</td>
+      <td class="px-3 py-2">${catatan || '-'}</td>
+    `;
+        rekapBody.appendChild(row);
+
+        // Kirim ke Google Sheets
+        fetch(form.action, {
+          method: 'POST',
+          body: new FormData(form),
+        })
+          .then(() => {
+            document.getElementById('successToast').classList.remove('hidden');
+            setTimeout(
+              () =>
+                document.getElementById('successToast').classList.add('hidden'),
+              3000
+            );
+            form.reset();
+          })
+          .catch((err) => alert('Error Google Sheets: ' + err))
+          .finally(() => {
+            resetButton();
+          });
+      }
+
+      // Update timestamp in real-time
+      function updateTimestamp() {
+        const now = new Date();
+        const options = {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+        };
+        document.getElementById('timestamp').textContent =
+          now.toLocaleDateString('id-ID', options);
+      }
+
+      // Initial update
+      updateTimestamp();
+
+      // Update every second
+      setInterval(updateTimestamp, 1000);
+    </script>
+  </body>
+</html>
