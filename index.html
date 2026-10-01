@@ -193,6 +193,7 @@
             >
               <span id="timestamp">-</span>
             </div>
+            <input type="hidden" id="waktuAbsensi" name="waktuAbsensi" />
           </div>
 
           <div>
@@ -253,6 +254,15 @@
       </div>
     </div>
 
+    <!-- Iframe tersembunyi untuk mengirim data ke Google Apps Script
+         tanpa fetch/CORS error -->
+    <iframe
+      name="googleSheetFrame"
+      id="googleSheetFrame"
+      style="display:none;width:0;height:0;border:0;visibility:hidden;"
+      title="Google Sheets submission frame"
+    ></iframe>
+
     <script>
       // 1. DATA KOORDINAT OUTLET (Ganti lat & lng dengan titik asli Google Maps Outlet Anda)
       // Radius penguncian dihitung dalam meter (contoh: 50 meter)
@@ -266,7 +276,7 @@
         'Dolopo': { lat: -7.7551625, lng: 111.5242715 },
         'Jenangan': { lat: -7.8228186, lng: 111.5421961 },
         'Jambon': { lat: -7.8952698, lng: 111.3745699 },
-        'Pilangkenceng': { lat: -7.4873067, lng: 111.6591418 },
+        'Pilangkenceng': { lat: -7.4871835, lng: 111.6616486 },
         
         // Tambahkan atau lengkapi koordinat outlet lainnya di bawah ini dengan format yang sama:
         // "Nama Outlet": { lat: angka_latitude, lng: angka_longitude }
@@ -401,7 +411,7 @@
           },
           {
             enableHighAccuracy: true, // Memaksa browser menggunakan GPS akurasi tinggi
-            timeout: 10000, // Batas waktu membaca GPS (10 detik)
+            timeout: 20000, // Batas waktu membaca GPS (20 detik)
             maximumAge: 0, // Memastikan lokasi yang diambil adalah real-time, bukan cache
           }
         );
@@ -420,46 +430,62 @@
         const shift = document.getElementById('shift').value;
         const kehadiran = document.getElementById('kehadiran').value;
         const catatan = document.getElementById('catatan').value;
+
         const waktu = new Date();
         const status = cekStatus(shift, waktu);
 
-        // Tambahkan ke tabel rekap
+        // Pastikan timestamp terbaru ikut dikirim ke Google Sheets.
+        updateTimestamp();
+
+        // ==============================
+        // TAMPILKAN DATA DI REKAP LOKAL
+        // ==============================
         const row = document.createElement('tr');
+
         row.innerHTML = `
-      <td class="px-3 py-2">${nama}</td>
-      <td class="px-3 py-2">${outlet}</td>
-      <td class="px-3 py-2">${shift}</td>
-      <td class="px-3 py-2">${waktu.toLocaleTimeString('id-ID')}</td>
-      <td class="px-3 py-2 font-bold ${
-        status === 'Terlambat' ? 'text-red-400' : 'text-green-400'
-      }">${status}</td>
-      <td class="px-3 py-2">${catatan || '-'}</td>
-    `;
+          <td class="px-3 py-2">${nama}</td>
+          <td class="px-3 py-2">${outlet}</td>
+          <td class="px-3 py-2">${shift}</td>
+          <td class="px-3 py-2">${waktu.toLocaleTimeString('id-ID')}</td>
+          <td class="px-3 py-2 font-bold ${
+            status === 'Terlambat' ? 'text-red-400' : 'text-green-400'
+          }">${status}</td>
+          <td class="px-3 py-2">${catatan || '-'}</td>
+        `;
+
         rekapBody.appendChild(row);
 
-        // Kirim ke Google Sheets
-        fetch(form.action, {
-          method: 'POST',
-          body: new FormData(form),
-        })
-          .then(() => {
-            document.getElementById('successToast').classList.remove('hidden');
-            setTimeout(
-              () =>
-                document.getElementById('successToast').classList.add('hidden'),
-              3000
-            );
-            form.reset();
-          })
-          .catch((err) => alert('Error Google Sheets: ' + err))
-          .finally(() => {
-            resetButton();
-          });
+        // ==========================================
+        // KIRIM KE GOOGLE APPS SCRIPT
+        // TANPA fetch() -> MENGHINDARI CORS ERROR
+        // ==========================================
+        form.target = 'googleSheetFrame';
+
+        // Submit native HTML form ke iframe tersembunyi.
+        // Browser tidak membutuhkan akses CORS ke respons Google.
+        form.submit();
+
+        // Karena native form tidak menyediakan .then/.catch seperti fetch,
+        // tampilkan notifikasi setelah request dikirim.
+        document.getElementById('successToast').classList.remove('hidden');
+
+        setTimeout(() => {
+          document.getElementById('successToast').classList.add('hidden');
+        }, 3000);
+
+        // Beri waktu request untuk dikirim sebelum form di-reset.
+        setTimeout(() => {
+          form.reset();
+          form.target = 'googleSheetFrame';
+          updateTimestamp();
+          resetButton();
+        }, 1200);
       }
 
       // Update timestamp in real-time
       function updateTimestamp() {
         const now = new Date();
+
         const options = {
           weekday: 'long',
           year: 'numeric',
@@ -469,8 +495,15 @@
           minute: '2-digit',
           second: '2-digit',
         };
-        document.getElementById('timestamp').textContent =
-          now.toLocaleDateString('id-ID', options);
+
+        const waktu = now.toLocaleString('id-ID', options);
+
+        document.getElementById('timestamp').textContent = waktu;
+
+        const hiddenTimestamp = document.getElementById('waktuAbsensi');
+        if (hiddenTimestamp) {
+          hiddenTimestamp.value = waktu;
+        }
       }
 
       // Initial update
